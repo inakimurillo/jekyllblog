@@ -20,8 +20,5 @@ Once selected, the image must be downloaded in promox commandline. In this examp
 wget -q https://cloud-images.ubuntu.com/releases/plucky/release/ubuntu-25.04-server-cloudimg-amd64.img
 {% endhighlight %}
 
-
-
-
 [ubuntu-images]: https://cloud-images.ubuntu.com/releases/
 

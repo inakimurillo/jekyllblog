@@ -1,0 +1,3 @@
+# How to use locally:
+
+bundle exec jekyll serve
