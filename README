@@ -1,0 +1,7 @@
+# Install Gems:
+
+bundle install
+
+# How to use locally:
+
+bundle exec jekyll serve
