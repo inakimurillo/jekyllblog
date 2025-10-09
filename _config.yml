@@ -21,7 +21,7 @@
 title: MuriLab
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  In this site you will find a collection of guides and adventures that I have done over the years.
+  Yet another blog with nerd stuff about servers, code and technology. Mainly you will find a collection of guides and adventures that I have done over the years. Everything here is not written by AI, but hey! I've used it to learn lots of thins :).
 baseurl: "/jekyllblog" # the subpath of your site, e.g. /blog
 url: "https://inakimurillo.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  inakimurillo
