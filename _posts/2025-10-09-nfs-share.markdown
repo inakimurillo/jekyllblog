@@ -1,0 +1,123 @@
+---
+layout: post
+title:  "NFS share"
+date:   2025-10-8 20:00:00 +0200
+categories: Guides
+tags: [howto, network]
+---
+
+The idea behind this post is to describe how I shared a folder from one server to another using NFS.
+
+# Server
+
+In this example, the server will share a folder with read only permissions. The forder to share is: "/mnt/shared". 
+
+## Needed software
+
+For the server in a Debian based distro:
+
+{% highlight bash %}
+sudo apt update
+sudo apt install nfs-kernel-server
+{% endhighlight %}
+
+## Configuration
+
+First the folder must be created and set the `nobody:nogroup` permissions as the folder will be readonly. 
+
+{% highlight bash %}
+mkdir /mnt/shared/
+chow nobody:nogroup /mnt/shared/
+{% endhighlight %}
+
+> [!WARNING]
+> It is very important to set the correct permissions on the folders, so the connected clients do not have special permissions.
+
+The configuration file is located in `/etc/exports`. Every share must specify the IP address allowed to connect. In this case, the complete subnet will be accepted as a client. Add the next line to the file:
+
+{% highlight bash %}
+/mnt/shared/ 192.168.0.0/24(ro,sync,no_subtree_check,root_squash)
+{% endhighlight %}
+
+Explanation:
+- **/mnt/shared/**: folder to share
+- **192.168.0.0/24**: network to share. Can be set to an ipconfig0
+- **ro**:  readonly
+- **sync**: Forces NFS to write changes to disk before replying
+- **no_subtree_check**: Avoids subtree verification
+- **root_squash**: Clients cannot claim to be root when operating on NFS-shared files
+
+## Enable server
+
+Now is time to start the server and add it to the system start up.
+
+{% highlight bash %}
+# The next line starts the server
+sudo systemctl start nfs-server 
+# The next line adds the server to the start up sequence
+sudo systemctl enable nfs-server
+{% endhighlight %}
+
+# Clients
+
+Now its time to connect the clients to the server.
+
+## Needed software
+
+Install the nfs filesystem to be used with `mount`
+
+{% highlight bash %}
+sudo apt install nfs-common
+{% endhighlight %}
+
+## Configuration
+
+First lets create the folder where the nfs will be mounted.
+
+{% highlight bash %}
+mkdir /mnt/shared_over_nfs
+{% endhighlight %}
+
+Now, lets add the nfs folder to the `/etc/fstab` configuration file. Add the next line:
+
+{% highlight bash %}
+192.168.0.2:/mnt/shared/ /mnt/shared_over_nfs nfs ro,sync,hard,intr  0  0
+{% endhighlight %}
+
+Explanation:
+- **192.168.0.2**: IP address of the server
+- **/mnt/shared/**: folder from the server to mount
+- **/mnt/shared_over_nfs**: folder to be mounted into
+- **nfs**: use `mount.nfs` as filesystem
+- **ro**: mount as readonly
+- **sync**: Force to make operations synchronously
+- **hard**: In case the server goes down the client will keep retrying indefinitely.
+- **intr**: Allows NFS requests to be interrupted
+- **0**: do not dump the filesystem with dump utility
+- **0**: Skip chceks on boot since this is a network filesystem
+
+## Mount
+
+Finally, mount manually the nfs filesystem (it will be mounted automagically on startup).
+
+{% highlight bash %}
+mount -a 
+{% endhighlight %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
